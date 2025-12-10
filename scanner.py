@@ -2,9 +2,7 @@ import argparse
 import socket
 from concurrent.futures import ThreadPoolExecutor
 
-# --threads 
 # --udp
-# --banner
 
 RED = "\033[31m"
 GREEN = "\033[32m"
@@ -25,7 +23,6 @@ parser.add_argument('--threads', type=int, help='Number of threads for scanning'
 # variables
 ports = []
 common_ports = [22, 80, 443, 8080]
-protocol = 'tcp'
 threads = 50
 
 # args
@@ -44,23 +41,28 @@ if args.threads:
     threads = args.threads
 
 # scan functions
-def scan(host, ports, timeout, protocol):
-    print(f"{'PORT':<18} {'STATE':<10}")
-    print("-" * 25)
+def scan(host, ports, timeout):
+    print(f"{'PORT':<15} {'STATE':<10}{'SERVICE'}")
+    print("-" * 34)
     for port in ports:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(timeout)
 
             result = s.connect_ex((host, port))
+
             if result == 0:
+                try:
+                    service = socket.getservbyport(port)
+                except:
+                    service = ''
                 if len(ports)>1 and args.verbose:
-                    print(f"{GREEN}[+]{RESET} {port:<8}/{protocol:<5} OPEN")
+                    print(f"{GREEN}[+]{RESET} {port:<5}/{'tcp':<6}{'OPEN':<10}{service}")
                 else:
-                    print(f"[+] {port:<8}/{protocol:<5} OPEN")
+                    print(f"[+] {port:<5}/{'tcp':<6}{'OPEN':<10}{service}")
             else:
-                if len(ports)>1 and args.verbose:
-                    print(f"[-] {port:<8}/{protocol:<5} CLOSED")
+                if args.verbose:
+                    print(f"[-] {port:<5}/{'tcp':<6}{'CLOSED':<4}")
 
         except socket.gaierror:
             print(f"{YELLOW}[E]{RESET} Host name resolution failed")
@@ -79,4 +81,4 @@ def scan_multiple(target,ports,timeout,threads):
         for port in ports:
             executor.submit(scan, target, port, timeout, args.verbose)
             
-scan(host,ports,timeout,protocol)
+scan(host,ports,timeout)
