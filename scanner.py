@@ -45,7 +45,8 @@ if args.threads:
 
 # scan functions
 def scan(host, ports, timeout, protocol):
-    print(f"PORTS              STATE")
+    print(f"{'PORT':<18} {'STATE':<10}")
+    print("-" * 25)
     for port in ports:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
