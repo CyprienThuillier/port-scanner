@@ -1,6 +1,7 @@
 import argparse
 import socket
 import ipaddress
+import time
 from concurrent.futures import ThreadPoolExecutor
 
 RED = "\033[31m"
@@ -28,6 +29,9 @@ threads = 50
 
 # functions
 def scan_port(host, port, timeout):
+    opened_ports = 0
+    closed_ports = 0
+    start_time = time.time()
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(timeout)
@@ -42,8 +46,10 @@ def scan_port(host, port, timeout):
                 service = ''
 
             print(f"{GREEN}{'[+]':<4}{RESET}{port:<5}/{'tcp':<6}{'OPEN':<10}{service}")
+            opened_ports += 1
 
         else:
+            closed_ports += 1
             if args.verbose:
                 print(f"{'[-]':<4}{port:<5}/{'tcp':<6}{'CLOSED':<4}")
 
@@ -56,7 +62,14 @@ def scan_port(host, port, timeout):
     except Exception as e:
         print(f"{YELLOW}{'[E]':<4}{RESET}Error on port {port}: {e}")
 
+    end_time = time.time()
+    delt_time = round((end_time - start_time), 3)
+    print(f"Scan completed in {delt_time}s\nOpen ports : {opened_ports}\nClosed ports : {closed_ports}")
+
 def scan_sev_ports(host, ports, timeout):
+    opened_ports = 0
+    closed_ports = 0
+    start_time = time.time()
     for port in ports:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -72,8 +85,10 @@ def scan_sev_ports(host, ports, timeout):
                     service = ''
 
                 print(f"{GREEN}{'[+]':<4}{RESET}{port:<5}/{'tcp':<6}{'OPEN':<10}{service}")
+                opened_ports += 1
 
             else:
+                closed_ports += 1
                 if args.verbose:
                     print(f"{'[-]':<4}{port:<5}/{'tcp':<6}{'CLOSED':<4}")
 
@@ -85,6 +100,10 @@ def scan_sev_ports(host, ports, timeout):
 
         except Exception as e:
             print(f"{YELLOW}{'[E]':<4}{RESET}Error on port {port}: {e}")
+
+    end_time = time.time()
+    delt_time = round((end_time - start_time), 3)
+    print(f"\nScan completed in {delt_time}s\nOpen ports : {opened_ports}\nClosed ports : {closed_ports}")
 
 def host_checker(host):
     try:
