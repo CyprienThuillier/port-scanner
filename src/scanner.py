@@ -23,7 +23,6 @@ parser.add_argument('--threads', type=int, help='Number of threads for scanning'
 args = parser.parse_args()
 
 # variables
-ports =[]
 common_ports = [22, 80, 443, 8080]
 threads = 50
 
@@ -64,7 +63,7 @@ def scan_port(host, port, timeout):
 
     end_time = time.time()
     delt_time = round((end_time - start_time), 3)
-    print(f"Scan completed in {delt_time}s\nOpen ports : {opened_ports}\nClosed ports : {closed_ports}")
+    print(f"\nScan completed in {delt_time}s\nOpen ports : {opened_ports}\nClosed ports : {closed_ports}")
 
 def scan_sev_ports(host, ports, timeout):
     opened_ports = 0
