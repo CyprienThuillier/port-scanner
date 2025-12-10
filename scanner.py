@@ -1,6 +1,17 @@
 import argparse
 import socket
 
+# -t / --target
+# -p / --port
+# -P / --ports (multi ports)
+# -r / --range
+# -c / --common
+# --timeout
+# --threads
+# -v / --verbose
+# --udp
+# --banner
+
 RED = "\033[31m"
 GREEN = "\033[32m"
 YELLOW = "\033[33m"
@@ -10,14 +21,20 @@ parser = argparse.ArgumentParser()
 
 # arguments
 parser.add_argument('-t', '--target', nargs=1, type=str, help='Target IP adress or hostname to scan', required=True)
-parser.add_argument('-p', '--ports', nargs='+', type=int, help='Specific ports to scan', required=False)
+parser.add_argument('-p', '--ports', nargs='+', type=int, help='Scan specific ports', required=False)
 parser.add_argument('-c', '--common', nargs='?', const=True, help='Scan common ports (22, 80, 443, 8080)', required=False)
+parser.add_argument('-r', '--range', nargs=2, type=int, help='Scan every port in a range', required=False)
 
 # variables
 default_ports = [22, 80, 443, 8080]
 args = parser.parse_args()
 host = args.target[0]
-ports = args.ports
+ports = []
+if args.ports:
+    ports = args.ports
+elif args.range:
+    for port in range(args.range[0], args.range[1]+1):
+        ports.append(port)
 
 # scan functions
 def scan(host, ports):
@@ -35,6 +52,5 @@ def scan(host, ports):
             print(f"{YELLOW}[E]{RESET} Error on port {port}: {e}")
         finally:
             s.close()
-
-if args.ports:
-    scan(host,ports)
+            
+scan(host,ports)
