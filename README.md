@@ -94,24 +94,24 @@ python3 scanner.py -t 192.168.1.10 -r 1 500 --threads 200
 ### Examples
 Single Port Scan
 ```bash
-PORT            STATE     SERVICE
+PORT             STATE      SERVICE
 ----------------------------------
-[+] 22    tcp    OPEN      ssh
+[+] 22   /tcp    OPEN       ssh
 ```
 Scan Common Ports
 ```bash
-PORT            STATE     SERVICE
+PORT             STATE      SERVICE
 ----------------------------------
-[-] 22    tcp    CLOSED
-[-] 80    tcp    CLOSED
-[+] 8080  tcp    OPEN      http-alt
+[-] 22   /tcp    CLOSED
+[-] 80   /tcp    CLOSED
+[+] 8080 /tcp    OPEN       http-alt
 ```
 Verbose Mode Output
 ```bash
-[-] 1     tcp    CLOSED
-[-] 2     tcp    CLOSED
-[+] 22    tcp    OPEN     ssh
-[-] 23    tcp    CLOSED
+[-] 1    /tcp    CLOSED
+[-] 2    /tcp    CLOSED
+[+] 22   /tcp    OPEN      ssh
+[-] 23   /tcp    CLOSED
 ...
 ```
 As the tool evolves, modules may be split (e.g., utils, validators, scan engines).
